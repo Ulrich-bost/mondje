@@ -55,7 +55,7 @@ Premier validé gagne. Quand le même UUID apparaît dans plusieurs fichiers (ou
 ## Limites connues
 
 - Le solde est calculé par jour UTC de création, pas à l'heure près.
-- La recherche par mot suit la configuration `simple` de PostgreSQL : pas de racinisation, pas d'insensibilité aux accents. Une recherche très sélective avec un tri par `seq` peut dépasser 200 ms si le planificateur choisit un mauvais plan.
+- La recherche par mot suit la configuration `simple` de PostgreSQL : pas de racinisation, pas d'insensibilité aux accents. La recherche rapide repose sur un parcours d'index seul : après un gros import, un `VACUUM` (que l'autovacuum finit par faire) est nécessaire pour retrouver la vitesse mesurée.
 - L'écriture des lots est sérialisée : le débit d'insertion total ne croît pas avec le nombre de fichiers simultanés.
 - Un seul processus API. Les imports en cours sont reconnus au redémarrage, pas répartis sur plusieurs instances.
 - Défis bonus non réalisés : upload reprenable (6), temps réel à 100 écrans (7), quasi-doublons (8). Les bonus export CSV et rapport d'erreurs en CSV sont faits ; le solde par agence aussi.
@@ -63,19 +63,19 @@ Premier validé gagne. Quand le même UUID apparaît dans plusieurs fichiers (ou
 
 ## Résultats des défis
 
-Les mesures se génèrent avec `tools/bench.py` sur la machine de référence et s'affichent dans l'onglet Résultats. Reporter ici les valeurs obtenues avant la soumission.
+Les mesures se génèrent avec `tools/bench.py` sur la machine de référence et s'affichent dans l'onglet Résultats. Valeurs mesurées sur ma machine locale avec 1 339 051 transactions en base ; à refaire sur la machine de référence (2 cœurs, 4 Go).
 
 | Défi | Résultat mesuré |
 | --- | --- |
-| 1 Export express | à renseigner |
-| 2 Import au chrono | à renseigner |
-| 3 Recherche sous 200 ms | à renseigner |
-| 4 et 5 Import qui ne s'arrête jamais, clic sur l'erreur | à renseigner |
-| 6 Trois agences | à renseigner |
-| 7 Qui a envoyé quoi | à renseigner |
-| 8 Double clic | à renseigner |
-| 9 Annulation | à renseigner |
-| 11 Solde | à renseigner |
+| 1 Export express | 11,5 s pour 1 339 051 transactions (seuil 30 s pour 100 000), aucun doublon, total identique au solde ; couvre aussi le bonus export géant (60 s pour 1 000 000) |
+| 2 Import au chrono | 5,7 s puis 8,2 s (deux mesures) pour 100 000 lignes, 0 erreur |
+| 3 Recherche sous 200 ms | p95 159 ms, médiane 85 ms, maximum 181 ms (500 requêtes, plus d'un million de transactions) |
+| 4 et 5 Import qui ne s'arrête jamais, clic sur l'erreur | 50 000 lignes en 3,1 s, 49 000 insérées, 1 000 erreurs rapportées sur 1 000 attendues ; le contexte renvoie la bonne ligne |
+| 6 Trois agences | 3 fichiers en 3,9 s, 70 000 transactions uniques, 20 000 doublons ignorés |
+| 7 Qui a envoyé quoi | 6 à 7 ms (seuil 5 s), bonne ligne retrouvée |
+| 8 Double clic | même import pour les deux envois, 20 000 lignes insérées |
+| 9 Annulation | 9 950 lignes retirées, les 50 modifiées à la main sont conservées |
+| 11 Solde | 6 ms au maximum sur 30 appels (moyenne 3,5 ms) |
 | 12 Coupure en plein import | test manuel, à renseigner |
-| 13 Mémoire sous 256 Mo | à renseigner |
-| 14 Export après correction | à renseigner |
+| 13 Mémoire sous 256 Mo | 1 000 000 de lignes en 111 s, pic mémoire 66,4 Mo (trace dans docs/memoire.csv) |
+| 14 Export après correction | 12,2 s, total de l'export identique au solde affiché |
