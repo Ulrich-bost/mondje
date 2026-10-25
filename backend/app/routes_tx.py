@@ -82,7 +82,12 @@ async def list_tx(
     if cursor is not None:
         conds.append(f"seq < {add(cursor)}")
     params.append(limit + 1)
-    sql = f"SELECT {COLS} FROM transactions WHERE {' AND '.join(conds)} ORDER BY seq DESC LIMIT ${len(params)}"
+    order = "seq + 0" if min_amount is not None or max_amount is not None else "seq"
+    inner = f"SELECT seq FROM transactions WHERE {' AND '.join(conds)} ORDER BY {order} DESC LIMIT ${len(params)}"
+    if deleted:
+        sql = f"SELECT {COLS} FROM transactions WHERE {' AND '.join(conds)} ORDER BY seq DESC LIMIT ${len(params)}"
+    else:
+        sql = f"SELECT {COLS} FROM transactions WHERE deleted_at IS NULL AND seq = ANY(ARRAY({inner})) ORDER BY seq DESC"
     async with db.pool.acquire() as conn:
         rows = await conn.fetch(sql, *params)
     more = len(rows) > limit

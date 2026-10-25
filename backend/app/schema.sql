@@ -41,7 +41,6 @@ CREATE TABLE IF NOT EXISTS transactions (
 CREATE INDEX IF NOT EXISTS tx_live_seq ON transactions (seq DESC) WHERE deleted_at IS NULL;
 CREATE INDEX IF NOT EXISTS tx_deleted ON transactions (deleted_at) WHERE deleted_at IS NOT NULL;
 CREATE INDEX IF NOT EXISTS tx_import ON transactions (import_id, source_line) WHERE import_id IS NOT NULL;
-CREATE INDEX IF NOT EXISTS tx_search ON transactions USING gin (search, type, amount) WHERE deleted_at IS NULL;
 
 CREATE TABLE IF NOT EXISTS import_errors (
   id bigserial PRIMARY KEY,
@@ -132,3 +131,7 @@ CREATE TRIGGER tx_balance_update AFTER UPDATE ON transactions
 DROP TRIGGER IF EXISTS tx_balance_delete ON transactions;
 CREATE TRIGGER tx_balance_delete AFTER DELETE ON transactions
   REFERENCING OLD TABLE AS old_rows FOR EACH STATEMENT EXECUTE FUNCTION tx_balance_delete();
+DROP INDEX IF EXISTS tx_search;
+DROP INDEX IF EXISTS tx_type_amount;
+CREATE INDEX IF NOT EXISTS tx_search_word ON transactions USING gin (search) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS tx_type_amount_cov ON transactions (type, amount) INCLUDE (seq, search) WHERE deleted_at IS NULL;

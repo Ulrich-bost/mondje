@@ -1,6 +1,7 @@
 services:
   db:
     image: postgres:16
+    shm_size: 512mb
     environment:
       POSTGRES_USER: mondje
       POSTGRES_PASSWORD: mondje

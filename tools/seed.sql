@@ -9,5 +9,5 @@ SELECT gen_random_uuid(),
        (ARRAY['douala','yaounde','bafoussam'])[1 + floor(random() * 3)::int],
        now() - random() * interval '365 days'
 FROM generate_series(1, 1000000) AS g;
-ANALYZE transactions;
+VACUUM ANALYZE transactions;
 ANALYZE daily_balance;
