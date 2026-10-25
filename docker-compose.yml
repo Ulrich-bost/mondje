@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: mondje
+      POSTGRES_PASSWORD: mondje
+      POSTGRES_DB: mondje
+    command:
+      - postgres
+      - -c
+      - shared_buffers=512MB
+      - -c
+      - work_mem=16MB
+      - -c
+      - maintenance_work_mem=256MB
+      - -c
+      - max_wal_size=2GB
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mondje -d mondje"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://mondje:mondje@db:5432/mondje
+      UPLOAD_DIR: /data/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    volumes:
+      - uploads:/data/uploads
+volumes:
+  pgdata:
+  uploads:

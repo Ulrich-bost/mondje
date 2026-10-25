@@ -1,0 +1,5 @@
+fastapi>=0.110
+uvicorn>=0.29
+asyncpg>=0.29
+orjson>=3.10
+psutil>=5.9

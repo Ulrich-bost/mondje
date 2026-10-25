@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mondje</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Mondje</h1>
+  <nav>
+    <button data-tab="tx" class="on">Transactions</button>
+    <button data-tab="imports">Imports</button>
+    <button data-tab="balance">Solde</button>
+    <button data-tab="results">Résultats</button>
+  </nav>
+  <div id="total"></div>
+</header>
+<div id="toast" role="status"></div>
+<main>
+  <section id="tab-tx">
+    <form id="create" class="bar">
+      <select name="type"><option>CREDIT</option><option>DEBIT</option></select>
+      <input name="amount" type="number" min="1" step="1" placeholder="Montant en FCFA" required>
+      <input name="description" maxlength="255" placeholder="Description" class="grow">
+      <select name="agency"><option value="">Sans agence</option><option>douala</option><option>yaounde</option><option>bafoussam</option></select>
+      <button type="submit">Ajouter</button>
+    </form>
+    <form id="filters" class="bar">
+      <select name="type"><option value="">Tous types</option><option>CREDIT</option><option>DEBIT</option></select>
+      <input name="min_amount" type="number" min="1" placeholder="Montant min">
+      <input name="max_amount" type="number" min="1" placeholder="Montant max">
+      <input name="q" placeholder="Mot de la description" class="grow">
+      <label><input type="checkbox" name="deleted"> Supprimées (24 h)</label>
+      <button type="submit">Filtrer</button>
+      <a class="btn" href="/api/export.json" download>Export .json</a>
+      <a class="btn" href="/api/export.csv" download>Export .csv</a>
+    </form>
+    <table>
+      <thead><tr><th>Type</th><th class="num">Montant</th><th>Description</th><th>Agence</th><th>Date</th><th></th></tr></thead>
+      <tbody id="tx-rows"></tbody>
+    </table>
+    <p><button id="tx-more" hidden>Charger la suite</button></p>
+  </section>
+
+  <section id="tab-imports" hidden>
+    <div class="bar">
+      <input id="files" type="file" accept=".txt,.json" multiple>
+      <select id="agency"><option value="">Sans agence</option><option>douala</option><option>yaounde</option><option>bafoussam</option></select>
+      <button id="send">Envoyer</button>
+    </div>
+    <div class="split">
+      <div id="import-list"></div>
+      <div id="import-detail"></div>
+    </div>
+  </section>
+
+  <section id="tab-balance" hidden>
+    <div class="bar">
+      <label>Solde au <input id="at" type="date"></label>
+      <button id="show-balance">Afficher</button>
+    </div>
+    <p id="balance-total" class="big"></p>
+    <table>
+      <thead><tr><th>Agence</th><th class="num">Solde</th></tr></thead>
+      <tbody id="balance-rows"></tbody>
+    </table>
+  </section>
+
+  <section id="tab-results" hidden>
+    <table>
+      <thead><tr><th>Défi</th><th>Intitulé</th><th class="num">Temps mesuré</th><th class="num">Lignes traitées</th><th class="num">Erreurs rapportées</th><th>Détail</th></tr></thead>
+      <tbody id="result-rows"></tbody>
+    </table>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+:root {
+  --paper: #eef2ee;
+  --rule: #c3d0c7;
+  --ink: #14231c;
+  --muted: #55665c;
+  --blue: #1b3a8a;
+  --credit: #1c7448;
+  --debit: #a2352a;
+  --surface: #f9fbf9;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #131b17;
+    --rule: #2c3b33;
+    --ink: #e6efe9;
+    --muted: #9bb0a3;
+    --blue: #8fb0ff;
+    --credit: #5fcf93;
+    --debit: #ff8f82;
+    --surface: #1a251f;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--rule) 1px, transparent 1px),
+    linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-attachment: fixed;
+  font: 15px/1.45 system-ui, "Segoe UI", sans-serif;
+}
+header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 1.5rem;
+  padding: 1rem 1.5rem;
+  background: var(--surface);
+  border-bottom: 2px solid var(--ink);
+}
+h1 { margin: 0; font: 700 2rem Palatino, "Palatino Linotype", Georgia, serif; letter-spacing: -0.02em; }
+nav { display: flex; gap: 0.25rem; flex: 1; }
+nav button { border: 0; background: none; padding: 0.4rem 0.8rem; color: var(--muted); border-bottom: 3px solid transparent; }
+nav button.on { color: var(--ink); border-bottom-color: var(--blue); font-weight: 600; }
+#total { font: 600 1.1rem Palatino, Georgia, serif; font-variant-numeric: tabular-nums; }
+main { max-width: 1180px; margin: 1.25rem auto; padding: 0 1rem 3rem; }
+section > * { background: var(--surface); }
+.bar { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; padding: 0.7rem; border: 1px solid var(--rule); margin-bottom: 0.6rem; }
+.grow { flex: 1; min-width: 160px; }
+input, select, button, .btn {
+  font: inherit;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--muted);
+  padding: 0.35rem 0.6rem;
+  border-radius: 3px;
+}
+button, .btn { cursor: pointer; text-decoration: none; background: var(--blue); color: var(--surface); border-color: var(--blue); }
+button.ghost { background: none; color: var(--blue); }
+button.danger { background: var(--debit); border-color: var(--debit); color: var(--surface); }
+button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible, tr[tabindex]:focus-visible { outline: 3px solid var(--blue); outline-offset: 1px; }
+table { width: 100%; border-collapse: collapse; border: 1px solid var(--rule); }
+th, td { padding: 0.4rem 0.6rem; text-align: left; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); border-bottom: 2px solid var(--ink); }
+.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.CREDIT { color: var(--credit); font-weight: 600; }
+.DEBIT { color: var(--debit); font-weight: 600; }
+.big { font: 700 2.4rem Palatino, Georgia, serif; font-variant-numeric: tabular-nums; margin: 0.5rem 0; padding: 0.5rem 0.8rem; }
+.split { display: grid; grid-template-columns: minmax(280px, 1fr) 2fr; gap: 0.8rem; align-items: start; }
+@media (max-width: 800px) { .split { grid-template-columns: 1fr; } }
+.card { border: 1px solid var(--rule); padding: 0.7rem; margin-bottom: 0.5rem; cursor: pointer; }
+.card.sel { border-color: var(--blue); border-width: 2px; }
+.card h3 { margin: 0 0 0.3rem; font-size: 1rem; word-break: break-all; }
+progress { width: 100%; height: 0.7rem; }
+.muted { color: var(--muted); }
+.panel { border: 1px solid var(--rule); padding: 0.8rem; }
+.panel h2 { margin: 0 0 0.5rem; font: 700 1.2rem Palatino, Georgia, serif; }
+.actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.6rem 0; }
+tr[tabindex] { cursor: pointer; }
+tr[tabindex]:hover { background: var(--paper); }
+pre.ctx { margin: 0.5rem 0; padding: 0.5rem; border: 1px solid var(--rule); background: var(--paper); overflow-x: auto; font: 13px/1.5 ui-monospace, Consolas, monospace; }
+pre.ctx .ln { color: var(--muted); display: inline-block; min-width: 4ch; text-align: right; margin-right: 1ch; }
+pre.ctx .bad { background: color-mix(in srgb, var(--debit) 18%, transparent); display: block; }
+pre.ctx mark { background: var(--debit); color: var(--surface); }
+#toast { position: fixed; right: 1rem; bottom: 1rem; max-width: 420px; padding: 0.6rem 0.9rem; background: var(--ink); color: var(--paper); display: none; z-index: 5; }
+#toast.bad { background: var(--debit); color: var(--surface); }
+@media (prefers-reduced-motion: no-preference) { progress { transition: value 0.3s; } }
