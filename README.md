@@ -76,6 +76,6 @@ Les mesures se génèrent avec `tools/bench.py` sur la machine de référence et
 | 8 Double clic | même import pour les deux envois, 20 000 lignes insérées |
 | 9 Annulation | 9 950 lignes retirées, les 50 modifiées à la main sont conservées |
 | 11 Solde | 6 ms au maximum sur 30 appels (moyenne 3,5 ms) |
-| 12 Coupure en plein import | test manuel, à renseigner |
+| 12 Coupure en plein import | API tuée par SIGKILL à 60 000 lignes lues sur 200 000 ; au redémarrage l'import reprend seul à partir de l'offset enregistré (70 000 lignes lues à la première lecture, jamais de retour à zéro), se termine avec 200 000 insérées, 0 doublon, 0 erreur, en 14,8 s au total (`tools/crash_test.py`) |
 | 13 Mémoire sous 256 Mo | 1 000 000 de lignes en 111 s, pic mémoire 66,4 Mo (trace dans docs/memoire.csv) |
 | 14 Export après correction | 12,2 s, total de l'export identique au solde affiché |
