@@ -202,6 +202,7 @@ async function loadDetail(id, resetErrors) {
   const errorRows = keepErrors || el("tbody", { id: "error-rows" });
   const more = keepErrors ? $("#err-more") : el("button", { id: "err-more", class: "ghost", hidden: true, onclick: guard(() => loadErrors(id, false)) }, "Charger plus d'erreurs");
   const context = keepErrors ? $("#context") : el("div", { id: "context" });
+  const report = keepErrors ? $("#report") : el("div", { id: "report" });
   box.replaceChildren(el("div", { class: "panel" },
     el("h2", {}, imp.filename),
     el("p", {}, `Statut ${imp.status} · ${imp.lines_read} lignes lues · ${imp.inserted} insérées · ${imp.duplicates} doublons ignorés · ${imp.errors} erreurs · durée ${ms(imp.duration_ms)}` + (imp.status === "cancelled" ? ` · ${imp.rolled_back} lignes retirées` : "")),
@@ -215,9 +216,9 @@ async function loadDetail(id, resetErrors) {
     el("table", {}, el("thead", {}, el("tr", {}, el("th", {}, "Ligne"), el("th", {}, "Raison"), el("th", {}, "Contenu"))), errorRows),
     more,
     context,
-    el("div", { id: "report" })
+    report
   ));
-  if (!keepErrors) await loadErrors(id, true);
+  if (!keepErrors || (imp.errors > 0 && !errorRows.children.length)) await loadErrors(id, true);
 }
 
 async function loadErrors(id, reset) {
@@ -292,7 +293,7 @@ const loadResults = guard(async () => {
 
 setInterval(() => {
   if (currentTab === "imports") loadImports();
-  if (currentTab === "tx" || currentTab === "balance") loadTotal();
+  loadTotal();
 }, 1000);
 
 refreshTab();
