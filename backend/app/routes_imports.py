@@ -159,8 +159,12 @@ async def error_context(import_id: UUID, error_id: int, around: int = Query(3, g
     before = data[:cut_start].split(b"\n")[:-1]
     if window_start > 0 and before:
         before = before[1:]
-    before = before[len(before) - around:] if around else []
-    after = data[cut_end:].split(b"\n")[:around] if around else []
+    before = before[max(0, len(before) - around):] if around else []
+    tail = data[cut_end:].split(b"\n")
+    last = tail.pop()
+    if len(data) < err["byte_end"] - window_start + 8192 and last:
+        tail.append(last)
+    after = tail[:around] if around else []
     target = numbered([data[cut_start:cut_end].rstrip(b"\r\n")], err["line_no"])[0]
     return {
         "line_no": err["line_no"],
