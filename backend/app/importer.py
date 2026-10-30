@@ -124,7 +124,7 @@ async def cancel(import_id):
             )
             removed = int(tag.split()[-1])
             await conn.execute(
-                "UPDATE imports SET status = 'cancelled', rolled_back = $2, finished_at = now() WHERE id = $1",
+                "UPDATE imports SET status = 'cancelled', rolled_back = $2, finished_at = COALESCE(finished_at, now()) WHERE id = $1",
                 import_id,
                 removed,
             )
